@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retoco Pomodoro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Noto Sans JP', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        header {
+            background-color: #4caf93;
+            padding: 1rem;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        main {
+            background-color: #fcfade;
+            min-height: calc(100vh - 60px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .timer {
+            font-size: clamp(3rem, 15vw, 6rem);
+            margin: 1rem 0;
+        }
+
+        .control-button {
+            font-size: clamp(1.5rem, 6vw, 2rem);
+            width: clamp(45px, 12vw, 60px);
+            height: clamp(45px, 12vw, 60px);
+            border: none;
+            border-radius: 50%;
+            background-color: #4caf93;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            -webkit-appearance: none;
+        }
+
+        .slider-container {
+            margin: 8px;
+            background: white;
+            padding: 0.8rem;
+            border-radius: 8px;
+            width: clamp(280px, 90vw, 300px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: inline-block;
+            width: 40%;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        input[type="range"] {
+            width: 55%;
+            -webkit-appearance: none;
+            background: #e0e0e0;
+            height: 6px;
+            border-radius: 3px;
+            vertical-align: middle;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #4caf93;
+            border-radius: 50%;
+        }
+
+        .about-section {
+            margin-top: 2rem;
+            padding: 1rem;
+            width: 100%;
+            max-width: clamp(280px, 90vw, 800px);
+        }
+
+        .about-heading {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            font-size: clamp(1.1rem, 4vw, 1.3rem);
+        }
+
+        .about-content {
+            text-align: left;
+            font-weight: 400;
+            font-size: clamp(0.8rem, 3vw, 0.9rem);
+            line-height: 1.4;
+            margin-bottom: 2rem;
+        }
+
+        .about-content a {
+            color: #4caf93;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        @media (max-width: 480px) {
+            main {
+                padding: 0.5rem;
+            }
+
+            .slider-container {
+                margin: 6px;
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Retoco Pomodoro</div>
+    </header>
+
+    <main>
+        <div class="timer" id="timer">25:00</div>
+        <button class="control-button" id="startButton">▶</button>
+
+        <div class="slider-container">
+            <label>Retoco Lo-Fi:</label>
+            <input type="range" min="0" max="100" value="0" id="volume1">
+        </div>
+        <div class="slider-container">
+            <label>雨音:</label>
+            <input type="range" min="0" max="100" value="0" id="volume2">
+        </div>
+        <div class="slider-container">
+            <label>風:</label>
+            <input type="range" min="0" max="100" value="0" id="volume3">
+        </div>
+        <div class="slider-container">
+            <label>渓流:</label>
+            <input type="range" min="0" max="100" value="0" id="volume4">
+        </div>
+        <div class="slider-container">
+            <label>電車:</label>
+            <input type="range" min="0" max="100" value="0" id="volume5">
+        </div>
+        <div class="slider-container">
+            <label>海岸:</label>
+            <input type="range" min="0" max="100" value="0" id="volume6">
+        </div>
+        <div class="slider-container">
+            <label>たき火:</label>
+            <input type="range" min="0" max="100" value="0" id="volume7">
+        </div>
+        <div class="slider-container">
+            <label>都会の喧騒:</label>
+            <input type="range" min="0" max="100" value="0" id="volume8">
+        </div>
+        <div class="slider-container">
+            <label>郊外の夜:</label>
+            <input type="range" min="0" max="100" value="0" id="volume9">
+        </div>
+        <div class="slider-container">
+            <label>春の山:</label>
+            <input type="range" min="0" max="100" value="0" id="volume10">
+        </div>
+
+        <div class="about-section">
+            <h2 class="about-heading">About Retoco Pomodoro</h2>
+            <div class="about-content">
+                This web application was created by Retoco for work purposes.<br><br>
+                Retoco Lo-Fi is composed by sunoai, and all other ambient sounds are borrowed from Kankyou Lab.<br><br>
+                The Pomodoro Timer consists of 25 minutes of work and 5 minutes of break.<br><br>
+                Voice messages will play at the start, with 5 minutes remaining, at break start, and at break end.<br><br>
+                For feedback and comments about this application, please contact Retoco 
+                (<a href="https://x.com/retoco8594" target="_blank">https://x.com/retoco8594</a>)
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // iOS Safariのオートプレイ制限解除用：一度だけ resume() を呼ぶ
+        // --------------------------------------------------------------------
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioContext = new AudioContext();
+
+        document.addEventListener('touchstart', function handleFirstTouch() {
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            // once: true で初回タップのみ
+        }, { once: true });
+
+
+        // LoFiPlayerクラス
+        // --------------------------------------------------------------------
+        class LoFiPlayer {
+            constructor() {
+                this.tracks = [
+                    './music_01/track1.mp3',
+                    './music_01/track2.mp3',
+                    './music_01/track3.mp3',
+                    './music_01/track4.mp3',
+                    './music_01/track5.mp3'
+                ];
+                this.currentTrack = 0;
+                this.volume = 0;
+                this.audio = new Audio(this.tracks[0]);
+                this.audio.loop = false; // 1曲終了後は次の曲に移る
+
+                // 曲終了時、次のトラックへ
+                this.audio.addEventListener('ended', () => {
+                    this.currentTrack = (this.currentTrack + 1) % this.tracks.length;
+                    this.audio.src = this.tracks[this.currentTrack];
+                    this.audio.volume = this.volume;
+                    this.audio.play().catch(err => console.log('Playback failed:', err));
+                });
+            }
+
+            setVolume(value) {
+                const vol = value / 100;
+                this.volume = vol;
+                this.audio.volume = vol;
+
+                // ボリュームが上がったときのみ再生を開始
+                if (vol > 0 && this.audio.paused) {
+                    this.audio.play().catch(err => console.log('Playback failed:', err));
+                }
+
+                // ボリュームが0になったら停止する例
+                if (vol === 0) {
+                    this.audio.pause();
+                    this.audio.currentTime = 0;
+                }
+            }
+        }
+
+
+        // SoundPlayerクラス
+        // --------------------------------------------------------------------
+        class SoundPlayer {
+            constructor(audioFile) {
+                this.audio = new Audio(audioFile);
+                this.audio.loop = true;
+                this.audio.volume = 0;
+            }
+
+            setVolume(value) {
+                const vol = value / 100;
+                this.audio.volume = vol;
+
+                if (vol > 0 && this.audio.paused) {
+                    this.audio.play().catch(err => console.log('Playback failed:', err));
+                }
+
+                if (vol === 0) {
+                    this.audio.pause();
+                    this.audio.currentTime = 0;
+                }
+            }
+        }
+
+
+        // VoicePlayerクラス
+        // --------------------------------------------------------------------
+        class VoicePlayer {
+            play(audioFile) {
+                const audio = new Audio(audioFile);
+                audio.play().catch(err => console.log('Voice playback failed:', err));
+            }
+        }
+
+
+        // プレイヤー生成
+        // --------------------------------------------------------------------
+        const players = [
+            new LoFiPlayer(),
+            new SoundPlayer('./sound/amaoto.mp3'),
+            new SoundPlayer('./sound/kaze.mp3'),
+            new SoundPlayer('./sound/keiryu.mp3'),
+            new SoundPlayer('./sound/densha.mp3'),
+            new SoundPlayer('./sound/kaigan1.mp3'),
+            new SoundPlayer('./sound/takibi.mp3'),
+            new SoundPlayer('./sound/daitokai.mp3'),
+            new SoundPlayer('./sound/inakayoru.mp3'),
+            new SoundPlayer('./sound/yama.mp3')
+        ];
+
+        const voicePlayer = new VoicePlayer();
+
+
+        // スライダー制御
+        // --------------------------------------------------------------------
+        for (let i = 1; i <= 10; i++) {
+            const slider = document.getElementById(`volume${i}`);
+            slider.addEventListener('input', (e) => {
+                players[i - 1].setVolume(e.target.value);
+            });
+        }
+
+
+        // Pomodoro タイマー制御
+        // --------------------------------------------------------------------
+        const startButton = document.getElementById('startButton');
+        const timerDisplay = document.getElementById('timer');
+        let timerInterval;
+        let isBreakTime = false;
+        let isRunning = false;
+
+        function updateTimer(timeLeft) {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.textContent =
+                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            let timeLeft = isBreakTime ? 5 * 60 : 25 * 60;
+            updateTimer(timeLeft);
+
+            if (!isBreakTime) {
+                voicePlayer.play('./voice/start_a.wav');
+            }
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer(timeLeft);
+
+                // 残り5分のボイス
+                if (timeLeft === 5 * 60 && !isBreakTime) {
+                    voicePlayer.play('./voice/5minago_a.wav');
+                }
+                // 休憩残り30秒ボイスなど(必要に応じて変更)
+                if (timeLeft === 30 && isBreakTime) {
+                    voicePlayer.play('./voice/breakend_a.wav');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    if (!isBreakTime) {
+                        // 作業終了時
+                        voicePlayer.play('./voice/breakstart_a.wav');
+                        isBreakTime = true;
+                        startTimer();
+                    } else {
+                        // 休憩終了時
+                        isBreakTime = false;
+                        startTimer();
+                    }
+                }
+            }, 1000);
+        }
+
+        // スタート・ストップボタン制御
+        // --------------------------------------------------------------------
+        startButton.addEventListener('click', () => {
+            if (!isRunning) {
+                isRunning = true;
+                startButton.textContent = '■';
+                startTimer();
+            } else {
+                isRunning = false;
+                clearInterval(timerInterval);
+                startButton.textContent = '▶';
+                updateTimer(isBreakTime ? 5 * 60 : 25 * 60);
+            }
+        });
+    </script>
+</body>
+</html>
