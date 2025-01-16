@@ -125,6 +125,63 @@
                 padding: 0.6rem;
             }
         }
+        .settings-button {
+            font-size: 1.5rem;
+            padding: 8px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+        }
+
+        .settings-dialog {
+            padding: 20px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .settings-dialog::backdrop {
+            background: rgba(0,0,0,0.5);
+        }
+
+        .dialog-content {
+            margin: 20px 0;
+        }
+
+        .dialog-content label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        .dialog-content input {
+            width: 100px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .dialog-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .dialog-buttons button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #saveSettings {
+            background-color: #4caf93;
+            color: white;
+        }
+
+        #cancelSettings {
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -135,6 +192,22 @@
     <main>
         <div class="timer" id="timer">25:00</div>
         <button class="control-button" id="startButton">▶</button>
+        <button class="settings-button" id="settingsButton">⚙️</button>
+
+        <!-- 設定ダイアログを追加 -->
+        <dialog id="settingsDialog" class="settings-dialog">
+            <h2>タイマー設定</h2>
+            <div class="dialog-content">
+                <label>作業時間（分）:</label>
+                <input type="number" id="workDuration" min="1" max="60" value="25">
+                <label>休憩時間（分）:</label>
+                <input type="number" id="breakDuration" min="1" max="30" value="5">
+            </div>
+            <div class="dialog-buttons">
+                <button id="cancelSettings">キャンセル</button>
+                <button id="saveSettings">保存</button>
+            </div>
+        </dialog>
 
         <div class="slider-container">
             <label>Retoco Lo-Fi:</label>
@@ -318,6 +391,32 @@
         let timerInterval;
         let isBreakTime = false;
         let isRunning = false;
+        let workDuration = 25;
+        let breakDuration = 5;
+
+        // 設定ダイアログの制御
+        const settingsDialog = document.getElementById('settingsDialog');
+        const settingsButton = document.getElementById('settingsButton');
+        const saveSettings = document.getElementById('saveSettings');
+        const cancelSettings = document.getElementById('cancelSettings');
+        const workDurationInput = document.getElementById('workDuration');
+        const breakDurationInput = document.getElementById('breakDuration');
+
+        settingsButton.addEventListener('click', () => {
+            settingsDialog.showModal();
+        });
+
+        cancelSettings.addEventListener('click', () => {
+            settingsDialog.close();
+        });
+
+        saveSettings.addEventListener('click', () => {
+            workDuration = parseInt(workDurationInput.value);
+            breakDuration = parseInt(breakDurationInput.value);
+            updateTimer(isBreakTime ? breakDuration * 60 : workDuration * 60);
+            settingsDialog.close();
+        });
+
 
         function updateTimer(timeLeft) {
             const minutes = Math.floor(timeLeft / 60);
@@ -327,7 +426,7 @@
         }
 
         function startTimer() {
-            let timeLeft = isBreakTime ? 5 * 60 : 25 * 60;
+            let timeLeft = isBreakTime ? breakDuration * 60 : workDuration * 60;
             updateTimer(timeLeft);
 
             if (!isBreakTime) {
@@ -342,7 +441,7 @@
                 if (timeLeft === 5 * 60 && !isBreakTime) {
                     voicePlayer.play('./voice/5minago_a.wav');
                 }
-                // 休憩残り30秒ボイスなど(必要に応じて変更)
+                // 休憩残り30秒ボイス
                 if (timeLeft === 30 && isBreakTime) {
                     voicePlayer.play('./voice/breakend_a.wav');
                 }
